@@ -1,0 +1,84 @@
+﻿body {
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.header h1 {
+  font-size: 28px;
+  margin: 0;
+}
+
+.back-button {
+  position: absolute;
+  left: 20px;
+  font-size: 16px;
+  text-decoration: none;
+  color: #333;
+  background-color: #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.back-button:hover {
+  background-color: #ccc;
+}
+
+
+/* グリッド配置 */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  padding: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ボタン */
+.section-button {
+  background-color: #ccffcc; /* 薄い緑 */
+  padding: 25px 0;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.section-button:hover {
+  transform: scale(1.05);
+}
+
+
+/* 年度見出し */
+.year-title {
+  font-size: 22px;
+  margin: 20px auto 10px;
+  text-align: left;
+  max-width: 900px;
+  color: #333;
+}
+
+/* グリッド配置（横3列固定） */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* ← 3列に変更 */
+  gap: 15px;
+  padding: 10px 30px;
+  max-width: 900px;
+  margin: 0 auto 30px;
+}
+
