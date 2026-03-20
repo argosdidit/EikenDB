@@ -1,0 +1,68 @@
+﻿body {
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0; /* header の外側に余白を作らない */
+  text-align: center;
+}
+
+/* ヘッダー全体を背景色で覆う */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100vw;             /* 横幅いっぱい */
+  box-sizing: border-box;    /* padding を含めて幅計算 */
+  background-color: #ccffcc; /* 緑色 (級に応じて JS で変更可能) */
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* タイトル */
+header h1 {
+  margin: 0;
+  font-size: 28px; /* year_times と同じサイズ */
+}
+
+/* 戻るボタン */
+.back-button {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-decoration: none;
+  background: #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: #333;
+}
+
+.back-button:hover {
+  background: #ccc;
+}
+
+/* グリッドで2x2配置 */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 600px;
+  margin: 30px auto 0;
+}
+
+/* ボタン */
+.section-button {
+  background-color: #ccffcc; /* 薄い緑 */
+  padding: 50px 0;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.section-button:hover {
+  transform: scale(1.05);
+}
