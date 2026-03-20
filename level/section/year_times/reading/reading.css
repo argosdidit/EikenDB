@@ -1,0 +1,170 @@
+﻿body {
+  font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+/* 共通ヘッダー */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+header h1 {
+  font-size: 28px;
+  margin: 0;
+}
+
+/* 戻るボタン */
+.back-button {
+  position: absolute;
+  left: 20px;
+  font-size: 16px;
+  text-decoration: none;
+  color: #333;
+  background-color: #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.back-button:hover {
+  background-color: #ccc;
+}
+
+/* メインコンテナ */
+#reading-container {
+  max-width: 760px;
+  margin: 20px auto;
+}
+
+/* AREA（文章セット） */
+.main-question {
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 25px 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.area-label {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* 本文PDF */
+.main-header img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+/* 設問ボックス */
+.quiz-box {
+  background: #fafafa;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+/* Q番号と設問画像を横並びに */
+.quiz-header-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.no-label {
+  font-size: 18px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.quiz-header img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ------------------------------ */
+/* ★ Vocabulary と完全一致の選択肢デザイン */
+/* ------------------------------ */
+
+.choice-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* hover */
+.choice-row:hover {
+  background: #e0e0e0;
+}
+
+/* 選択時 */
+.choice-row.selected {
+  background: #ccffcc;
+}
+
+/* 正解 */
+.choice-row.correct {
+  background: #b2f2bb;
+}
+
+/* 不正解 */
+.choice-row.incorrect {
+  background: #ffa8a8;
+}
+
+/* 番号 */
+.choice-number {
+  font-size: 16px;
+  font-weight: bold;
+  width: 20px;
+}
+
+/* 画像 */
+.choice {
+  max-width: 90%;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+/* 採点ボタン */
+.button-area {
+  text-align: center;
+  margin: 30px;
+}
+
+#check-all {
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #87cefa;
+  cursor: pointer;
+}
+
+#check-all:hover {
+  background: #5dbbe6;
+}
+
+/* 結果表示 */
+#result-box {
+  max-width: 700px;
+  margin: 20px auto;
+  font-size: 16px;
+}
