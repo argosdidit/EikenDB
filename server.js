@@ -1,12 +1,21 @@
-// server.js
+// server.js (ESM版)
 
-const express = require("express");
-const mysql = require("mysql2/promise");
-const path = require("path");
+import express from "express";
+import mysql from "mysql2/promise";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const app = express();
-const PORT = 3000; // Node.js 用のポート。MySQL とは別
+const PORT = process.env.PORT || 3000;
 
-// 環境変数から DB 接続情報を取得（Docker対応）
+// __dirname を ESM で再現
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// DB 接続情報
 const dbConfig = {
   host: process.env.DB_HOST || "127.0.0.1",
   user: process.env.DB_USER || "root",
@@ -14,16 +23,15 @@ const dbConfig = {
   database: process.env.DB_NAME || "EIKENDB"
 };
 
-// 静的ファイル配信（HTML / CSS / JS）
-app.use(express.static(path.join(__dirname)));
+// 静的ファイル配信
+app.use(express.static(__dirname));
 
 // -----------------------------
-// /api/quizVocabulary エンドポイント
+// /api/quizVocabulary
 // -----------------------------
 app.get("/api/quizVocabulary", async (req, res) => {
   const { level, year, times } = req.query;
 
-  // レベル → テーブル名のマッピング
   const tableMap = {
     pre2: "VOC_PRE2",
     grade2: "VOC_2",
@@ -35,10 +43,8 @@ app.get("/api/quizVocabulary", async (req, res) => {
   if (!tableName) return res.status(400).json({ error: "Invalid level" });
 
   try {
-    // MySQL に接続
     const connection = await mysql.createConnection(dbConfig);
 
-    // データ取得
     const [rows] = await connection.execute(
       `
       SELECT
@@ -49,19 +55,15 @@ app.get("/api/quizVocabulary", async (req, res) => {
       WORD3,
       WORD4,
       ANSWER
-      FROM
-      ${tableName}
-      WHERE
-      YEAR = ?
-      AND
-      TIMES = ?`,
+      FROM ${tableName}
+      WHERE YEAR = ? AND TIMES = ?
+      `,
       [year, times]
     );
 
     await connection.end();
-
-    // JSON で返却
     res.json(rows);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "DB error" });
@@ -69,12 +71,11 @@ app.get("/api/quizVocabulary", async (req, res) => {
 });
 
 // -----------------------------
-// /api/reading エンドポイント
+// /api/reading
 // -----------------------------
 app.get("/api/reading", async (req, res) => {
   const { level, year, times } = req.query;
 
-  // レベル → テーブル名のマッピング
   const tableSentence = {
     pre2: "READING_SENTENCE_PRE2",
     grade2: "READING_SENTENCE_2",
@@ -99,7 +100,6 @@ app.get("/api/reading", async (req, res) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
 
-    // 文章データ
     const [sentenceRows] = await connection.execute(
       `
       SELECT
@@ -112,15 +112,11 @@ app.get("/api/reading", async (req, res) => {
       PATH_SENTENCE,
       PATH_EXPLANATION
       FROM ${sentenceTable}
-      WHERE
-      YEAR = ?
-      AND
-      TIMES = ?
+      WHERE YEAR = ? AND TIMES = ?
       `,
       [year, times]
     );
 
-    // 設問データ
     const [choiceRows] = await connection.execute(
       `
       SELECT
@@ -138,10 +134,7 @@ app.get("/api/reading", async (req, res) => {
       PATH_CHOICE4,
       ANSWER
       FROM ${choiceTable}
-      WHERE
-      YEAR = ?
-      AND
-      TIMES = ?
+      WHERE YEAR = ? AND TIMES = ?
       `,
       [year, times]
     );
@@ -159,10 +152,9 @@ app.get("/api/reading", async (req, res) => {
   }
 });
 
-
 // -----------------------------
 // サーバー起動
 // -----------------------------
 app.listen(PORT, () => {
-  console.log(`Server running at http://127.0.0.1:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
