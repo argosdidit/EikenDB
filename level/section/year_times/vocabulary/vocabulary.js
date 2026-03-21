@@ -107,7 +107,7 @@
         container.querySelectorAll(".quiz-box").forEach((box, index) => {
           const selected = box.querySelector(".option.selected");
           const correctIndex = quizData[index].answer;
-          const correctWord = quizData[index][`word{correctIndex}`];
+          const correctWord = quizData[index][`word${correctIndex}`];
 
           const number = (index + 1).toString().padStart(2, "0");
 
