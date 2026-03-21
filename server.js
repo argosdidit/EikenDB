@@ -25,10 +25,10 @@ app.get("/api/quizVocabulary", async (req, res) => {
 
   // レベル → テーブル名のマッピング
   const tableMap = {
-    pre2: "VOC_PRE2",
-    grade2: "VOC_2",
-    pre1: "VOC_PRE1",
-    grade1: "VOC_1"
+    pre2: "voc_pre2",
+    grade2: "voc_2",
+    pre1: "voc_pre1",
+    grade1: "voc_1"
   };
 
   const tableName = tableMap[level];
@@ -76,17 +76,17 @@ app.get("/api/reading", async (req, res) => {
 
   // レベル → テーブル名のマッピング
   const tableSentence = {
-    pre2: "READING_SENTENCE_PRE2",
-    grade2: "READING_SENTENCE_2",
-    pre1: "READING_SENTENCE_PRE1",
-    grade1: "READING_SENTENCE_1"
+    pre2: "reading_sentence_pre2",
+    grade2: "reading_sentence_2",
+    pre1: "reading_sentence_pre1",
+    grade1: "reading_sentence_1"
   };
 
   const tableChoice = {
-    pre2: "READING_CHOICE_PRE2",
-    grade2: "READING_CHOICE_2",
-    pre1: "READING_CHOICE_PRE1",
-    grade1: "READING_CHOICE_1"
+    pre2: "reading_choice_pre2",
+    grade2: "reading_choice_2",
+    pre1: "reading_choice_pre1",
+    grade1: "reading_choice_1"
   };
 
   const sentenceTable = tableSentence[level];
