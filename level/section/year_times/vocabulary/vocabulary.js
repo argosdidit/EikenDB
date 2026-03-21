@@ -27,10 +27,11 @@
 
     loadQuiz: async function () {
       const urlParams = new URLSearchParams(window.location.search);
+      const level = urlParams.get("level");
       const year = urlParams.get("year");
       const times = urlParams.get("times");
 
-      const res = await fetch(`/api/quizVocabulary?level=${levelParam}&year=${year}&times=${times}`);
+      const res = await fetch(`/api/quizVocabulary?level=${level}&year=${year}&times=${times}`);
       quizData = await res.json();
 
       return this;
