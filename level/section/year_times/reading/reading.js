@@ -62,13 +62,13 @@
         areaBox.className = "main-question";
 
         areaBox.innerHTML = `
-          <div class="area-label">[${sentence.CLAUSE}]【${sentence.AREA}】 ${sentence.SUBJECT}</div>
+          <div class="area-label">[${sentence.clause}]【${sentence.area}】 ${sentence.subject}</div>
           <div class="main-header">
-            <img src="${sentence.PATH_SENTENCE}">
+            <img src="${sentence.path_sentence}">
           </div>
         `;
 
-        const questions = choiceList.filter(q => q.AREA === sentence.AREA);
+        const questions = choiceList.filter(q => q.area === sentence.area);
 
         questions.forEach(q => {
           const quizBox = document.createElement("div");
@@ -77,9 +77,9 @@
 
           quizBox.innerHTML = `
             <div class="quiz-header-row">
-              <div class="no-label">Q${q.NO}</div>
+              <div class="no-label">Q${q.no}</div>
               <div class="quiz-header">
-                <img src="${q.PATH_QUESTION}">
+                <img src="${q.path_question}">
               </div>
             </div>
 
@@ -121,8 +121,8 @@
         
         document.querySelectorAll(".quiz-box").forEach(box => {
           const no = Number(box.dataset.no);
-          const q = choiceList.find(item => item.NO === no);
-          const correct = q.ANSWER;
+          const q = choiceList.find(item => item.no === no);
+          const correct = q.answer;
           
           const selectedRow = box.querySelector(".choice-row.selected");
           const correctRow = box.querySelector(`.choice-row:nth-child(${correct})`);
