@@ -64,16 +64,16 @@
         const box = document.createElement("div");
         box.className = "quiz-box";
 
-        const number = item.NO.toString().padStart(2, "0");
+        const number = item.no.toString().padStart(2, "0");
 
         // 正規表現はテンプレートリテラルの外で作る
         const reg = new RegExp("\\[(\\d+)\\]", "g");
-        const questionHTML = item.SENTENCES.replace(reg, `[${number}]`);
+        const questionHTML = item.sentences.replace(reg, `[${number}]`);
 
         box.innerHTML = `
           <div class="quiz-question">[No.${number}]<br>${questionHTML}</div>
           <div class="options">
-            ${[item.WORD1, item.WORD2, item.WORD3, item.WORD4]
+            ${[item.word1, item.word2, item.word3, item.word4]
               .map((w, i) => `<div class="option" data-value="${i + 1}">${i + 1}. ${w}</div>`)
               .join("")}
           </div>
@@ -106,7 +106,7 @@
 
         container.querySelectorAll(".quiz-box").forEach((box, index) => {
           const selected = box.querySelector(".option.selected");
-          const correctIndex = quizData[index].ANSWER;
+          const correctIndex = quizData[index].answer;
           const correctWord = quizData[index][`WORD${correctIndex}`];
 
           const number = (index + 1).toString().padStart(2, "0");
