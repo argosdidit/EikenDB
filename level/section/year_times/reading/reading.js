@@ -23,10 +23,11 @@
     },
     async loadReadingData() {
       const urlParams = new URLSearchParams(window.location.search);
+      const level = urlParams.get("level");
       const year = urlParams.get("year");
       const times = urlParams.get("times");
 
-      const res = await fetch(`/api/reading?level=${levelParam}&year=${year}&times=${times}`);
+      const res = await fetch(`/api/reading?level=${level}&year=${year}&times=${times}`);
       const data = await res.json();
 
       sentenceList = data.sentence;
