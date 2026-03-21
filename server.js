@@ -1,21 +1,12 @@
-// server.js (ESM版)
+// server.js
 
-import express from "express";
-import mysql from "mysql2/promise";
-import path from "path";
-import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-
-dotenv.config();
-
+const express = require("express");
+const mysql = require("mysql2/promise");
+const path = require("path");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000; // Node.js 用のポート。MySQL とは別
 
-// __dirname を ESM で再現
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// DB 接続情報
+// 環境変数から DB 接続情報を取得（Docker対応）
 const dbConfig = {
   host: process.env.DB_HOST || "127.0.0.1",
   user: process.env.DB_USER || "root",
@@ -23,15 +14,16 @@ const dbConfig = {
   database: process.env.DB_NAME || "EIKENDB"
 };
 
-// 静的ファイル配信
-app.use(express.static(__dirname));
+// 静的ファイル配信（HTML / CSS / JS）
+app.use(express.static(path.join(__dirname)));
 
 // -----------------------------
-// /api/quizVocabulary
+// /api/quizVocabulary エンドポイント
 // -----------------------------
 app.get("/api/quizVocabulary", async (req, res) => {
   const { level, year, times } = req.query;
 
+  // レベル → テーブル名のマッピング
   const tableMap = {
     pre2: "VOC_PRE2",
     grade2: "VOC_2",
@@ -43,27 +35,33 @@ app.get("/api/quizVocabulary", async (req, res) => {
   if (!tableName) return res.status(400).json({ error: "Invalid level" });
 
   try {
+    // MySQL に接続
     const connection = await mysql.createConnection(dbConfig);
 
+    // データ取得
     const [rows] = await connection.execute(
       `
       SELECT
-      NO,
-      SENTENCES,
-      WORD1,
-      WORD2,
-      WORD3,
-      WORD4,
-      ANSWER
-      FROM ${tableName}
-      WHERE YEAR = ? AND TIMES = ?
-      `,
+      no,
+      sentences,
+      word1,
+      word2,
+      word3,
+      word4,
+      answer
+      FROM
+      ${tableName}
+      WHERE
+      year = ?
+      AND
+      times = ?`,
       [year, times]
     );
 
     await connection.end();
-    res.json(rows);
 
+    // JSON で返却
+    res.json(rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "DB error" });
@@ -71,11 +69,12 @@ app.get("/api/quizVocabulary", async (req, res) => {
 });
 
 // -----------------------------
-// /api/reading
+// /api/reading エンドポイント
 // -----------------------------
 app.get("/api/reading", async (req, res) => {
   const { level, year, times } = req.query;
 
+  // レベル → テーブル名のマッピング
   const tableSentence = {
     pre2: "READING_SENTENCE_PRE2",
     grade2: "READING_SENTENCE_2",
@@ -100,41 +99,49 @@ app.get("/api/reading", async (req, res) => {
   try {
     const connection = await mysql.createConnection(dbConfig);
 
+    // 文章データ
     const [sentenceRows] = await connection.execute(
       `
       SELECT
-      LEVELID,
-      YEAR,
-      TIMES,
-      AREA,
-      CLAUSE,
-      SUBJECT,
-      PATH_SENTENCE,
-      PATH_EXPLANATION
+      levelid,
+      year,
+      times,
+      area,
+      clause,
+      subject,
+      path_sentence,
+      path_explanation
       FROM ${sentenceTable}
-      WHERE YEAR = ? AND TIMES = ?
+      WHERE
+      year = ?
+      AND
+      times = ?
       `,
       [year, times]
     );
 
+    // 設問データ
     const [choiceRows] = await connection.execute(
       `
       SELECT
-      LEVELID,
-      YEAR,
-      TIMES,
-      AREA,
-      NO,
-      CLAUSE,
-      SUBJECT,
-      PATH_QUESTION,
-      PATH_CHOICE1,
-      PATH_CHOICE2,
-      PATH_CHOICE3,
-      PATH_CHOICE4,
-      ANSWER
+      levelid,
+      year,
+      times,
+      area,
+      no,
+      clause,
+      subject,
+      path_question,
+      path_choice1,
+      path_choice2,
+      path_choice3,
+      path_choice4,
+      answer
       FROM ${choiceTable}
-      WHERE YEAR = ? AND TIMES = ?
+      WHERE
+      year = ?
+      AND
+      times = ?
       `,
       [year, times]
     );
@@ -152,9 +159,10 @@ app.get("/api/reading", async (req, res) => {
   }
 });
 
+
 // -----------------------------
 // サーバー起動
 // -----------------------------
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running at http://127.0.0.1:${PORT}`);
 });
