@@ -1,21 +1,21 @@
 // server.js
 
 const express = require("express");
-const mysql = require("mysql2/promise");
+const { Client } = require("pg");
 const path = require("path");
 const app = express();
-const PORT = 3000; // Node.js 用のポート。MySQL とは別
+const PORT = 3000;
 
-// 環境変数から DB 接続情報を取得（Docker対応）
-const dbConfig = {
-  host: process.env.DB_HOST || "127.0.0.1",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "root",
-  database: process.env.DB_NAME || "EIKENDB"
-};
+// PostgreSQL 接続設定（Render 対応）
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+client.connect();
 
 // 静的ファイル配信（HTML / CSS / JS）
 app.use(express.static(path.join(__dirname)));
+
 
 // -----------------------------
 // /api/quizVocabulary エンドポイント
@@ -23,7 +23,6 @@ app.use(express.static(path.join(__dirname)));
 app.get("/api/quizVocabulary", async (req, res) => {
   const { level, year, times } = req.query;
 
-  // レベル → テーブル名のマッピング
   const tableMap = {
     pre2: "voc_pre2",
     grade2: "voc_2",
@@ -35,38 +34,29 @@ app.get("/api/quizVocabulary", async (req, res) => {
   if (!tableName) return res.status(400).json({ error: "Invalid level" });
 
   try {
-    // MySQL に接続
-    const connection = await mysql.createConnection(dbConfig);
-
-    // データ取得
-    const [rows] = await connection.execute(
+    const result = await client.query(
       `
       SELECT
-      no,
-      sentences,
-      word1,
-      word2,
-      word3,
-      word4,
-      answer
-      FROM
-      ${tableName}
-      WHERE
-      year = ?
-      AND
-      times = ?`,
+        no,
+        sentences,
+        word1,
+        word2,
+        word3,
+        word4,
+        answer
+      FROM ${tableName}
+      WHERE year = $1 AND times = $2
+      `,
       [year, times]
     );
 
-    await connection.end();
-
-    // JSON で返却
-    res.json(rows);
+    res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error("quizVocabulary error:", err);
     res.status(500).json({ error: "DB error" });
   }
 });
+
 
 // -----------------------------
 // /api/reading エンドポイント
@@ -74,7 +64,6 @@ app.get("/api/quizVocabulary", async (req, res) => {
 app.get("/api/reading", async (req, res) => {
   const { level, year, times } = req.query;
 
-  // レベル → テーブル名のマッピング
   const tableSentence = {
     pre2: "reading_sentence_pre2",
     grade2: "reading_sentence_2",
@@ -97,64 +86,52 @@ app.get("/api/reading", async (req, res) => {
   }
 
   try {
-    const connection = await mysql.createConnection(dbConfig);
-
-    // 文章データ
-    const [sentenceRows] = await connection.execute(
+    const sentenceResult = await client.query(
       `
       SELECT
-      levelid,
-      year,
-      times,
-      area,
-      clause,
-      subject,
-      path_sentence,
-      path_explanation
+        levelid,
+        year,
+        times,
+        area,
+        clause,
+        subject,
+        path_sentence,
+        path_explanation
       FROM ${sentenceTable}
-      WHERE
-      year = ?
-      AND
-      times = ?
+      WHERE year = $1 AND times = $2
       `,
       [year, times]
     );
 
-    // 設問データ
-    const [choiceRows] = await connection.execute(
+    const choiceResult = await client.query(
       `
       SELECT
-      levelid,
-      year,
-      times,
-      area,
-      no,
-      clause,
-      subject,
-      path_question,
-      path_choice1,
-      path_choice2,
-      path_choice3,
-      path_choice4,
-      answer
+        levelid,
+        year,
+        times,
+        area,
+        no,
+        clause,
+        subject,
+        path_question,
+        path_choice1,
+        path_choice2,
+        path_choice3,
+        path_choice4,
+        answer
       FROM ${choiceTable}
-      WHERE
-      year = ?
-      AND
-      times = ?
+      WHERE year = $1 AND times = $2
       `,
       [year, times]
     );
-
-    await connection.end();
 
     res.json({
-      sentence: sentenceRows,
-      choice: choiceRows
+      sentence: sentenceResult.rows,
+      choice: choiceResult.rows
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("reading error:", err);
     res.status(500).json({ error: "DB error" });
   }
 });
