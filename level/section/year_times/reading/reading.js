@@ -87,7 +87,7 @@
               ${[1,2,3,4].map(n => `
                 <div class="choice-row">
                   <span class="choice-number">${n}.</span>
-                  <img src="${q[`PATH_CHOICE${n}`]}" class="choice" data-value="${n}">
+                  <img src="${q[`path_choice${n}`]}" class="choice" data-value="${n}">
                 </div>
               `).join("")}
             </div>
