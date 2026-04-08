@@ -73,7 +73,7 @@
         questions.forEach(q => {
           const quizBox = document.createElement("div");
           quizBox.className = "quiz-box";
-          quizBox.dataset.no = q.NO;
+          quizBox.dataset.no = q.no;
 
           quizBox.innerHTML = `
             <div class="quiz-header-row">
