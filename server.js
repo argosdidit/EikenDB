@@ -13,6 +13,31 @@ const client = new Client({
 });
 client.connect();
 
+// GitHub Pages の画像ベースURL
+const IMAGE_BASE_URL = "https://argosdidit.github.io/EikenDB/";
+
+// 文章データ（sentence）の prefix 付与
+function addSentencePrefix(row) {
+  return {
+    ...row,
+    path_sentence: IMAGE_BASE_URL + row.path_sentence,
+    path_explanation: IMAGE_BASE_URL + row.path_explanation
+  };
+}
+
+// 選択肢データ（choice）の prefix 付与
+function addChoicePrefix(row) {
+  return {
+    ...row,
+    path_question: IMAGE_BASE_URL + row.path_question,
+    path_choice1: IMAGE_BASE_URL + row.path_choice1,
+    path_choice2: IMAGE_BASE_URL + row.path_choice2,
+    path_choice3: IMAGE_BASE_URL + row.path_choice3,
+    path_choice4: IMAGE_BASE_URL + row.path_choice4
+  };
+}
+
+
 // 静的ファイル配信（HTML / CSS / JS）
 app.use(express.static(path.join(__dirname)));
 
@@ -125,9 +150,13 @@ app.get("/api/reading", async (req, res) => {
       [year, times]
     );
 
+    // ★ ここで prefix を付ける
+    const sentenceWithPrefix = sentenceResult.rows.map(addSentencePrefix);
+    const choiceWithPrefix = choiceResult.rows.map(addChoicePrefix);
+
     res.json({
-      sentence: sentenceResult.rows,
-      choice: choiceResult.rows
+      sentence: sentenceWithPrefix,
+      choice: choiceWithPrefix
     });
 
   } catch (err) {
