@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  background: #000; /* 好みで背景色 */
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.main-image {
+  width: 100%;
+  height: auto;
+  max-width: 800px;
+  user-select: none;
+  pointer-events: none;
+}
