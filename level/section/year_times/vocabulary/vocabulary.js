@@ -4,8 +4,14 @@
   let
     container,
     quizData = [],
+    data_pathVocExplanation,
+    pathExplanationUrl,
     levelParam,
     fieldParam,
+
+    year,
+    times,
+
     func,
     active;
 
@@ -28,11 +34,14 @@
     loadQuiz: async function () {
       const urlParams = new URLSearchParams(window.location.search);
       const level = urlParams.get("level");
-      const year = urlParams.get("year");
-      const times = urlParams.get("times");
+      year = urlParams.get("year");
+      times = urlParams.get("times");
 
       const res = await fetch(`/api/quizVocabulary?level=${level}&year=${year}&times=${times}`);
       quizData = await res.json();
+
+      const res_vocExplanation = await fetch(`/api/vocExplanation?level=${level}&year=${year}&times=${times}`);
+      data_pathVocExplanation = await res_vocExplanation.json();
 
       return this;
     },
@@ -50,7 +59,7 @@
 
       const { label, color } = levelMap[levelParam] || levelMap["pre2"];
       header.style.backgroundColor = color;
-      header.querySelector("h1").textContent = `${label} 英検クイズ`;
+      header.querySelector("h1").textContent = `ワード ${label} ${year}年 ${times}回`;
 
       backLink.href = `../year_times.html?level=${levelParam}&field=${fieldParam}`;
 
@@ -81,7 +90,6 @@
 
         container.appendChild(box);
       });
-
       return this;
     },
     enableSelect: function () {
@@ -146,7 +154,20 @@
         });
 
         const finalScore = document.createElement("div");
-        finalScore.innerHTML = `<strong>あなたの得点: ${score} / ${quizData.length}</strong>`;
+
+        pathExplanationUrl = data_pathVocExplanation[0].path_explanation;
+
+        // vocExplanation.html にパスを渡す
+        const url = `vocExplanation/vocExplanation.html?img=${encodeURIComponent(pathExplanationUrl)}`;
+
+        finalScore.innerHTML =
+        `
+        <strong>あなたの得点: ${score} / ${quizData.length}</strong>
+        <br>
+        <a href="${url}" target="_blank" style="margin-top:10px; display:inline-block;">
+        ▶ 解説へ
+        </a>
+        `;
         finalScore.style.marginTop = "20px";
         resultBox.appendChild(finalScore);
       });
