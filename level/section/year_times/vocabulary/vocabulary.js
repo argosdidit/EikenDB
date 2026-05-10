@@ -109,6 +109,24 @@
       const resultBox = document.getElementById(conf.resultBox);
 
       button.addEventListener("click", () => {
+
+        // 25問採点
+        container.querySelectorAll(".quiz-box").forEach((box, index) => {
+          const selected = box.querySelector(".option.selected");
+          const correctIndex = quizData[index].answer;
+          const correctWord = quizData[index][`word${correctIndex}`];
+
+          const number = (index + 1).toString().padStart(2, "0");
+
+          // 正規表現はテンプレート外で作る
+          const reg = new RegExp("\\[0*" + number + "\\]");
+          const questionDiv = box.querySelector(".quiz-question");
+
+          questionDiv.innerHTML = questionDiv.innerHTML.replace(
+            reg,
+            `<span style="color:red;">${correctWord}</span>`
+          );
+          
         resultBox.innerHTML = "";
         let score = 0;
 
